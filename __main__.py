@@ -1,0 +1,86 @@
+import datetime
+import os
+import tarfile
+import sys
+from dateutil import relativedelta
+import shutil
+
+#######################################################################
+# make archive from source directory to the destination directory
+#######################################################################
+def make_archive(src,dest,dest_dir):
+    dest=os.path.join(dest,dest_dir)
+    src=os.path.realpath(src)
+    dest=os.path.realpath(dest)
+
+    #make destination path if not exists...
+    if not os.path.exists(dest):
+        os.makedirs(dest, exist_ok=True)
+    
+    dest=os.path.join(dest,os.path.basename(src))            
+    tar = tarfile.open(dest+'.tar.gz', "w:gz")
+    tar.add(src)
+    tar.close()
+    
+#######################################################################
+# maintainence code
+#######################################################################
+def maintainence(dest):
+
+    ## List all .tar.gz files which are compressed by us at root of the folder. ##
+    dir_list={}
+    for root,dirs,files in os.walk(dest):
+        for _dir in dirs:
+            dir_time=int(datetime.datetime.strptime(_dir,"%d-%m-%Y [%H-%M-%S]").timestamp())
+            dir_list[dir_time]=_dir
+        break
+    sorted(dir_list) #sorted(file_list,reverse=True)
+
+    for _dir in dir_list:
+        #get timestamp of past six month before current time.
+        relative_time=int((datetime.datetime.now()+relativedelta.relativedelta(months=-6)).timestamp())
+        if( int(relative_time) > int(_dir) ):
+            if(os.path.isdir(os.path.join(dest,dir_list.get(_dir)))):
+                shutil.rmtree(os.path.join(dest,dir_list.get(_dir)))
+
+#######################################################################
+# main execution - begins
+#######################################################################
+
+if (sys.platform == 'win32'):
+    startup_path = os.path.join(os.path.expanduser('~'),
+                                'AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup')
+    startup_file = os.path.join(startup_path, 'pysync.bat')
+    if (not os.path.isfile(startup_file)):
+
+        if (os.path.isdir(startup_path)):
+            # create startup bath file
+            startup_file = open(startup_file, 'w+')
+            content = "python " + os.path.abspath(os.path.dirname(__file__))+ " >> "+os.path.join(os.path.abspath(os.path.dirname(__file__)),"pysync.log")
+            startup_file.write(content)
+            startup_file.close()
+else:
+    # Put this in /etc/init (Use /etc/systemd in Ubuntu 15.x), /etc/init.d
+    '''
+        #pysync.conf
+        start on runlevel [2345]
+        stop on runlevel [!2345]
+        exec /path/to/script.py
+    '''
+
+#if(True):
+if(datetime.datetime.today().weekday()==5):
+    #current time
+    current_time=datetime.datetime.now() #date-month-year [hours-minute-sec]
+    #date formated directory name.
+    archive_parent=current_time.strftime("%d-%m-%Y [%H-%M-%S]")
+
+    for destination_dir in open(os.path.join(os.path.dirname(__file__),"destination.ini"),"r"):
+        destination_dir=destination_dir.strip()
+
+        for source_dir in open(os.path.join(os.path.dirname(__file__),"source.ini"),"r"):
+            source_dir=source_dir.strip()
+            if (not os.path.isdir(source_dir)):
+                continue
+            make_archive(source_dir,destination_dir,archive_parent)
+        maintainence(destination_dir)
