@@ -14,6 +14,7 @@ Usage:
 	
 
 Future:
+	
 	* Autorun at startup for Linux destro and Mac Systems
 	
 	* More controls and optimizations
