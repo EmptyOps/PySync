@@ -1,3 +1,4 @@
+
 # PySync
 
 An easy tool created with python to sync all backup folders to targeted destination folders for lazy admins.
@@ -11,3 +12,4 @@ Usage:
 Future:
 	* Autorun at startup for Linux destro and Mac Systems
 	* More controls and optimizations
+

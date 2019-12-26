@@ -74,3 +74,4 @@ class PySync:
 if __name__ == '__main__':
     PySync = PySync()
     PySync.daemonize('pysync_daemon.py')
+    
