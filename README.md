@@ -3,6 +3,10 @@
 
 ### An easy tool created with python to sync all backup folders and databases to targeted destination folders and google drive for lazy admins.
 
+## Installation
+* Clone the repository.
+* Install the dependency by `pip install -r requirements.txt` command in your python environment.
+
 ## Usage:
 1. edit source.ini and put all the source directorie's path one after one on new line.
 2. edit destination.ini and put all the destination directorie's path one after one on new line.
