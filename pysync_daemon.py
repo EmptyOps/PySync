@@ -38,9 +38,9 @@ class PySyncBackup:
                         self.make_archive(src_dir, dest_dir, self.DIR_TIME)
                         self.db_dump(dest_dir, self.DIR_TIME, user=self.DB_USER, password=self.DB_PASSWORD)
                     self.maintainence(dest_dir)
-
-                self.make_archive(os.path.join(dest_dirs[-1], self.DIR_TIME, 'DB'), dest_dirs[-1], self.DIR_TIME)
-                sync.google.sync(dest_dirs[-1], self.DIR_TIME)
+                if  len(dest_dirs):
+                    self.make_archive(os.path.join(dest_dirs[-1], self.DIR_TIME, 'DB'), dest_dirs[-1], self.DIR_TIME)
+                    sync.google.sync(dest_dirs[-1], self.DIR_TIME)
             # sleep time calculation
             _year = int(self.CURRENT_TIME.strftime("%Y"))
             _month = int(self.CURRENT_TIME.strftime("%m"))
